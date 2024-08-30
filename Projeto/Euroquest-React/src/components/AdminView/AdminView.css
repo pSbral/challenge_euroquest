@@ -1,0 +1,24 @@
+.admin-view-container {
+  display: flex; /* Faz com que a Sidebar e o conteúdo da AdminView fiquem lado a lado */
+  height: 100vh; /* Ocupa toda a altura da janela */
+}
+
+.trilhas-view {
+  flex: 1;
+  padding: 90px;
+  margin-left: 250px; /* Adiciona uma margem à esquerda para não sobrepor a Sidebar */
+  overflow-y: auto;
+  background-color: #f0f0f0;
+}
+
+.no-area-selected {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #555;
+    font-size: 1.2rem;
+    text-align: center;
+}
+  
+
