@@ -78,7 +78,13 @@ const AdminView = () => {
 
   return (
     <div className="flex h-screen">
-      <Sidebar areas={areas} onSelectArea={handleAreaSelection} onAddArea={handleAddArea} />
+      <Sidebar
+        areas={areas}
+        onSelectArea={handleAreaSelection}
+        onAddArea={handleAddArea}
+        selectedArea={selectedArea}
+      />
+
       <div className="flex-1 p-6 ml-64 bg-gray-100 overflow-y-auto">
         {selectedArea !== null ? (
           <>
