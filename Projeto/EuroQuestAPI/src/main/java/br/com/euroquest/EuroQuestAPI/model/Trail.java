@@ -26,11 +26,12 @@ public class Trail {
 
     private String description;
 
-    @Enumerated(EnumType.STRING)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "theme_id")
     private Theme theme;
 
 
-    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "trail")
+    @OneToMany(mappedBy = "trail", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Quiz> quizzes;
 
 

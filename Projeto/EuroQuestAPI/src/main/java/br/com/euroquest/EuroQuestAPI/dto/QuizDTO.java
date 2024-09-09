@@ -22,4 +22,7 @@ public class QuizDTO {
 
     private List<QuestionDTO> questions;
 
+
+    
+
 }

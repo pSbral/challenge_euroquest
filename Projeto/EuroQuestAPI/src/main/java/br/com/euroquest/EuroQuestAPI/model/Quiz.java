@@ -24,8 +24,7 @@ public class Quiz {
     @JoinColumn(name = "trail_id")
     private Trail trail;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true) // Define o relacionamento
-    @JoinColumn(name = "quiz_id")
+    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> questions;
 
 

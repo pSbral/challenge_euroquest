@@ -1,26 +1,33 @@
 package br.com.euroquest.EuroQuestAPI.model;
 
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.util.List;
+
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
-public enum Theme {
+@Setter
+@Entity
+@Table(name = "tb_theme")
+public class Theme {
 
-    THEME1("theme1"),
-    THEME2("theme2"),
-    THEME3("theme3");
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private final String name;
 
-    Theme(String name) {
-        this.name = name;
-    }
+    private ThemeName nome;
 
-    public static Theme fromString(String text) {
-        for (Theme theme : Theme.values()) {
-            if (theme.name.equalsIgnoreCase(text)) {
-                return theme;
-            }
-        }
-        throw new IllegalArgumentException("No theme matching: " + text);
-    }
+    @OneToMany(mappedBy = "theme", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Trail> trails;
+
+
+
+
 }

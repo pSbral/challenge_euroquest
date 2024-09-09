@@ -22,7 +22,7 @@ public class Question {
     private String[] options;
     private int correctOptionIndex;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
