@@ -32,7 +32,7 @@ public class QuizService {
     @Autowired
     private QuestionRepository questionRepository;
 
-    public QuizDTO convertToDTO(Quiz quiz) {
+    protected QuizDTO convertToDTO(Quiz quiz) {
             return modelMapper.map(quiz, QuizDTO.class);
     }
 

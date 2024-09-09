@@ -30,7 +30,7 @@ public class TrailService {
     @Autowired
     private QuizService quizService;
 
-    private TrailDTO convertToDTO(Trail trail) {
+    protected TrailDTO convertToDTO(Trail trail) {
         return modelMapper.map(trail, TrailDTO.class);
     }
 
