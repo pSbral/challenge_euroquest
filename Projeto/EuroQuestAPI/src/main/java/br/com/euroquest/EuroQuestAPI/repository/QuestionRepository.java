@@ -10,6 +10,6 @@ import java.util.Optional;
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Long> {
 
-    List<Question> findByQuizId(Long quizId);
-    Optional<Question> findByIdAndQuizId(Long questionId, Long quizId);
+    List<Question> findByTrailId(Long trailId);
+    Optional<Question> findByIdAndTrailId(Long questionId, Long trailId);
 }

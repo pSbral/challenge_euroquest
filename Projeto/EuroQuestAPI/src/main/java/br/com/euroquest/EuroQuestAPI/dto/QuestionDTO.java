@@ -20,6 +20,6 @@ public class QuestionDTO {
 
     private int correctOptionIndex;
 
-    private QuizDTO quiz;
+    private TrailDTO trailDTO;
 
 }

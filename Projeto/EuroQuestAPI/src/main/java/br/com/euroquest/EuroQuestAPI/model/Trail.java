@@ -32,7 +32,37 @@ public class Trail {
 
 
     @OneToMany(mappedBy = "trail", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Quiz> quizzes;
+    private List<Question> questions;
+
+    private int currentQuestionIndex = 0;
+    private int score = 0;
+
+    public Trail(List<Question> questions) {
+        this.questions = questions;
+    }
+
+    public boolean hasNextQuestion() {
+        return currentQuestionIndex < questions.size();
+    }
+
+    public Question getNextQuestion() {
+        if (hasNextQuestion()) {
+            return questions.get(currentQuestionIndex++);
+        }
+        return null;
+    }
+
+    public void submitAnswer(int selectedOptionIndex) {
+        Question currentQuestion = questions.get(currentQuestionIndex - 1);
+        if (currentQuestion.isCorrectAnswer(selectedOptionIndex)) {
+            score++;
+        }
+    }
+
+    public int getTotalQuestions() {
+        return questions.size();
+    }
+
 
 
 }

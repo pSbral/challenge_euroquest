@@ -1,6 +1,7 @@
 package br.com.euroquest.EuroQuestAPI.dto;
 
 
+import br.com.euroquest.EuroQuestAPI.model.Question;
 import br.com.euroquest.EuroQuestAPI.model.Theme;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,7 +27,7 @@ public class TrailDTO {
 
     private Theme theme;
 
-    private List<QuizDTO> quizzes;
+    private List<Question> questions;
 
 
 

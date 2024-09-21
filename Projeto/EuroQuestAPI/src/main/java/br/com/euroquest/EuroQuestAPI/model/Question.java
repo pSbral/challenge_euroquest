@@ -23,8 +23,8 @@ public class Question {
     private int correctOptionIndex;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "quiz_id")
-    private Quiz quiz;
+    @JoinColumn(name = "trail_id")
+    private Trail trail;
 
 
     public boolean isCorrectAnswer(int selectedOptionIndex) {

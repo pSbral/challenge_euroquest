@@ -1,16 +1,13 @@
 package br.com.euroquest.EuroQuestAPI.service;
 
 
-
-import br.com.euroquest.EuroQuestAPI.dto.QuizDTO;
+import br.com.euroquest.EuroQuestAPI.dto.QuestionDTO;
 import br.com.euroquest.EuroQuestAPI.dto.TrailDTO;
 import br.com.euroquest.EuroQuestAPI.model.Trail;
 import br.com.euroquest.EuroQuestAPI.repository.TrailRepository;
-
 import br.com.euroquest.EuroQuestAPI.service.exception.ResourceNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +25,7 @@ public class TrailService {
     private TrailRepository trailRepository;
 
     @Autowired
-    private QuizService quizService;
+    private QuestionService questionService;
 
     protected TrailDTO convertToDTO(Trail trail) {
         return modelMapper.map(trail, TrailDTO.class);
@@ -39,14 +36,13 @@ public class TrailService {
     }
 
     @Transactional(readOnly = true)
-    public List<QuizDTO> getQuizzesByTrailId(Long trailId) {
+    public List<QuestionDTO> getQuestionsByTrailId(Long trailId) {
         Trail trail = trailRepository.findById(trailId)
                 .orElseThrow(ResourceNotFoundException::new);
-        return trail.getQuizzes().stream()
-                .map(quizService::convertToDTO)
+        return trail.getQuestions().stream()
+                .map(questionService::convertToDTO)
                 .collect(Collectors.toList());
     }
-
     @Transactional(readOnly = true)
     public List<TrailDTO> findAll() {
         List<Trail> trails = trailRepository.findAll();
@@ -54,6 +50,7 @@ public class TrailService {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
+
     @Transactional(readOnly = true)
     public TrailDTO findById(Long id) {
         Trail trail = trailRepository.findById(id)
@@ -75,5 +72,12 @@ public class TrailService {
         }
         trailRepository.deleteById(id);
     }
+
+    public int getTrailScore(Long trailId) {
+        Trail trail = trailRepository.findById(trailId)
+                .orElseThrow(() -> new ResourceNotFoundException(trailId));
+        return trail.getScore();
+    }
+
 
 }
