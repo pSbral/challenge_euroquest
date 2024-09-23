@@ -1,8 +1,10 @@
 package br.com.euroquest.EuroQuestAPI.controller;
 
 import br.com.euroquest.EuroQuestAPI.dto.QuestionDTO;
+import br.com.euroquest.EuroQuestAPI.dto.ThemeDTO;
 import br.com.euroquest.EuroQuestAPI.dto.TrailDTO;
 import br.com.euroquest.EuroQuestAPI.service.QuestionService;
+import br.com.euroquest.EuroQuestAPI.service.ThemeService;
 import br.com.euroquest.EuroQuestAPI.service.TrailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,18 @@ public class AdminController {
     private QuestionService questionService;
     @Autowired
     private TrailService trailService;
+    @Autowired
+    private ThemeService themeService;
+
+
+
+    @PostMapping("/theme")
+    public ResponseEntity<ThemeDTO> createTheme(@RequestBody ThemeDTO themeDTO) {
+        ThemeDTO createdTheme= themeService.insert(themeDTO);
+        return ResponseEntity.ok(createdTheme);
+    }
+
+
 
     @PostMapping("/trail")
     public ResponseEntity<TrailDTO> createTrail(@RequestBody TrailDTO trailDTO) {
@@ -33,6 +47,7 @@ public class AdminController {
     }
 
 
+    // mexer em logica de add quests
     @PostMapping("/question")
     public ResponseEntity<QuestionDTO> createQuestion(@RequestBody QuestionDTO questionDTO) {
         QuestionDTO createdQuestion = questionService.insert(questionDTO);

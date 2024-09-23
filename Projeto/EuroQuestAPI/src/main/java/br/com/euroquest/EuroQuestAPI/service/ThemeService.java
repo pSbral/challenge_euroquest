@@ -70,4 +70,13 @@ public class ThemeService {
                 .orElseThrow(() -> new ResourceNotFoundException(id));
         return convertToDTO(theme);
     }
+
+    @Transactional
+    public ThemeDTO insert(ThemeDTO dto) {
+        Theme theme = convertToEntity(dto);
+        Theme createdTheme = themeRepository.save(theme);
+        return convertToDTO(createdTheme);
+    }
+
+
 }
