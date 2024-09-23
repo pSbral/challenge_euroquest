@@ -27,7 +27,12 @@ public class TrailDTO {
 
     private Theme theme;
 
-    private List<Question> questions;
+
+    private int currentQuestionIndex = 0;
+    private int score = 0;
+
+
+    private List<QuestionDTO> questions;
 
 
 

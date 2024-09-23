@@ -73,6 +73,23 @@ public class TrailService {
         trailRepository.deleteById(id);
     }
 
+    @Transactional
+    public TrailDTO update(Long id, TrailDTO trailDTO) {
+        Trail existingTrail = trailRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(id));
+        existingTrail.setName(trailDTO.getName());
+        existingTrail.setTheme(trailDTO.getTheme());
+        existingTrail.setScore(trailDTO.getScore());
+        existingTrail.setQuestions(
+                trailDTO.getQuestions().stream()
+                        .map(questionService::convertToEntity)
+                        .collect(Collectors.toList())
+        );
+
+        Trail updatedTrail = trailRepository.save(existingTrail);
+        return convertToDTO(updatedTrail);
+    }
+
     public int getTrailScore(Long trailId) {
         Trail trail = trailRepository.findById(trailId)
                 .orElseThrow(() -> new ResourceNotFoundException(trailId));
