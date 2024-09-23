@@ -3,11 +3,11 @@ package br.com.euroquest.EuroQuestAPI.service;
 
 import br.com.euroquest.EuroQuestAPI.dto.QuestionDTO;
 import br.com.euroquest.EuroQuestAPI.dto.TrailDTO;
+import br.com.euroquest.EuroQuestAPI.model.Question;
 import br.com.euroquest.EuroQuestAPI.model.Trail;
 import br.com.euroquest.EuroQuestAPI.repository.TrailRepository;
 import br.com.euroquest.EuroQuestAPI.service.exception.ResourceNotFoundException;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import br.com.euroquest.EuroQuestAPI.util.Converter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,51 +18,45 @@ import java.util.stream.Collectors;
 @Service
 public class TrailService {
 
-    @Autowired
-    private ModelMapper modelMapper;
 
-    @Autowired
-    private TrailRepository trailRepository;
+    private final Converter converter;
+    private final TrailRepository trailRepository;
 
-    @Autowired
-    private QuestionService questionService;
 
-    protected TrailDTO convertToDTO(Trail trail) {
-        return modelMapper.map(trail, TrailDTO.class);
+    public TrailService(Converter converter, TrailRepository trailRepository) {
+        this.converter = converter;
+        this.trailRepository = trailRepository;
     }
 
-    private Trail convertToEntity(TrailDTO trailDTO) {
-        return modelMapper.map(trailDTO, Trail.class);
-    }
 
     @Transactional(readOnly = true)
     public List<QuestionDTO> getQuestionsByTrailId(Long trailId) {
         Trail trail = trailRepository.findById(trailId)
                 .orElseThrow(ResourceNotFoundException::new);
         return trail.getQuestions().stream()
-                .map(questionService::convertToDTO)
-                .collect(Collectors.toList());
+                .map(question -> converter.toDTO(question, QuestionDTO.class))
+                .toList();
     }
     @Transactional(readOnly = true)
     public List<TrailDTO> findAll() {
         List<Trail> trails = trailRepository.findAll();
         return trails.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+                    .map(trail -> converter.toDTO(trail, TrailDTO.class))
+                .toList();
     }
 
     @Transactional(readOnly = true)
     public TrailDTO findById(Long id) {
         Trail trail = trailRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(id));
-        return convertToDTO(trail);
+        return converter.toDTO(trail, TrailDTO.class);
     }
 
     @Transactional
     public TrailDTO insert(TrailDTO trailDTO) {
-        Trail trail = convertToEntity(trailDTO);
+        Trail trail = converter.toEntity(trailDTO, Trail.class);
         Trail savedTrail = trailRepository.save(trail);
-        return convertToDTO(savedTrail);
+        return converter.toDTO(savedTrail, TrailDTO.class);
     }
 
     @Transactional
@@ -82,12 +76,12 @@ public class TrailService {
         existingTrail.setScore(trailDTO.getScore());
         existingTrail.setQuestions(
                 trailDTO.getQuestions().stream()
-                        .map(questionService::convertToEntity)
-                        .collect(Collectors.toList())
+                        .map(questionDTO -> converter.toEntity(questionDTO, Question.class))
+                        .toList()
         );
 
         Trail updatedTrail = trailRepository.save(existingTrail);
-        return convertToDTO(updatedTrail);
+        return converter.toDTO(updatedTrail, TrailDTO.class);
     }
 
     public int getTrailScore(Long trailId) {

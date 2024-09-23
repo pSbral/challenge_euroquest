@@ -6,7 +6,7 @@ import br.com.euroquest.EuroQuestAPI.model.Trail;
 import br.com.euroquest.EuroQuestAPI.repository.QuestionRepository;
 import br.com.euroquest.EuroQuestAPI.repository.TrailRepository;
 import br.com.euroquest.EuroQuestAPI.service.exception.ResourceNotFoundException;
-import org.modelmapper.ModelMapper;
+import br.com.euroquest.EuroQuestAPI.util.Converter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,30 +18,23 @@ import java.util.stream.Collectors;
 @Service
 public class QuestionService {
 
-    @Autowired
-    private ModelMapper modelMapper;
 
-
-    @Autowired
-    private QuestionRepository questionRepository;
+    private final Converter converter;
+    private final QuestionRepository questionRepository;
+    private final TrailRepository trailRepository;
 
     @Autowired
-    private TrailRepository trailRepository;
-
-    public QuestionDTO convertToDTO(Question question) {
-        return modelMapper.map(question, QuestionDTO.class);
+    public QuestionService(Converter converter, QuestionRepository questionRepository, TrailRepository trailRepository) {
+        this.converter = converter;
+        this.questionRepository = questionRepository;
+        this.trailRepository = trailRepository;
     }
-
-    public Question convertToEntity(QuestionDTO dto) {
-        return modelMapper.map(dto, Question.class);
-    }
-
 
     @Transactional(readOnly = true)
     public List<QuestionDTO> findAll() {
         List<Question> questions = questionRepository.findAll();
         return questions.stream()
-                .map(this::convertToDTO)
+                .map(question -> converter.toDTO(question, QuestionDTO.class))
                 .collect(Collectors.toList());
     }
 
@@ -50,24 +43,25 @@ public class QuestionService {
     public QuestionDTO findById(Long id) {
         Question question = questionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(id));
-        return convertToDTO(question);
+        return converter.toDTO(question, QuestionDTO.class);
     }
 
     //admin
     @Transactional
     public QuestionDTO insert(QuestionDTO questionDTO) {
-        Question question = convertToEntity(questionDTO);
+        Question question = converter.toEntity(questionDTO, Question.class);
         Question savedQuestion = questionRepository.save(question);
-        return convertToDTO(savedQuestion);
+        return converter.toDTO(savedQuestion, QuestionDTO.class);
     }
 
     @Transactional
     public QuestionDTO addQuestionToTrail(Long trailId, QuestionDTO questionDTO) {
         Trail trail = trailRepository.findById(trailId)
                 .orElseThrow(ResourceNotFoundException::new);
-        Question question = convertToEntity(questionDTO);
+        Question question = converter.toEntity(questionDTO, Question.class);
         question.setTrail(trail);
-        return convertToDTO(questionRepository.save(question));
+        Question savedQuestion = questionRepository.save(question);
+        return converter.toDTO(savedQuestion, QuestionDTO.class);
     }
 
     @Transactional
@@ -79,7 +73,7 @@ public class QuestionService {
                 .orElseThrow(ResourceNotFoundException::new);
         question.setTrail(trail);
         Question updatedQuestion = questionRepository.save(question);
-        return convertToDTO(updatedQuestion);
+        return converter.toDTO(updatedQuestion, QuestionDTO.class);
     }
 
     //user
@@ -88,8 +82,8 @@ public class QuestionService {
     public List<QuestionDTO> findByTrailId(Long trailId) {
         List<Question> questions = questionRepository.findByTrailId(trailId);
         return questions.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+                .map(question -> converter.toDTO(question, QuestionDTO.class))
+                .toList();
     }
 
     public boolean checkAnswer(Long trailId, Long questionId, int selectedOptionIndex) {

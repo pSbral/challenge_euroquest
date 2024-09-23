@@ -6,76 +6,58 @@ import br.com.euroquest.EuroQuestAPI.model.Theme;
 import br.com.euroquest.EuroQuestAPI.repository.ThemeRepository;
 import br.com.euroquest.EuroQuestAPI.repository.TrailRepository;
 import br.com.euroquest.EuroQuestAPI.service.exception.ResourceNotFoundException;
-import org.modelmapper.ModelMapper;
+import br.com.euroquest.EuroQuestAPI.util.Converter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
 public class ThemeService {
 
-    @Autowired
-    private ModelMapper modelMapper;
 
-    @Autowired
+
+    private Converter converter;
     private ThemeRepository themeRepository;
-
-    @Autowired
     private TrailRepository trailRepository;
-
-
-    @Autowired
     private TrailService trailService;
 
-    private ThemeDTO convertToDTO(Theme theme) {
-        return modelMapper.map(theme, ThemeDTO.class);
-    }
-    private Theme convertToEntity(ThemeDTO themeDTO) {
-        return modelMapper.map(themeDTO, Theme.class);
-    }
-
-
-    /*
-    @Transactional(readOnly = true)
-    public List<TrailDTO> getTrailsByThemeId(Long themeId) {
-        Theme theme = themeRepository.findById(themeId)
-                .orElseThrow(ResourceNotFoundException::new);
-        return theme.getTrails().stream()
-                .map(trailService::convertToDTO)
-                .collect(Collectors.toList());
+    @Autowired
+    public ThemeService(TrailService trailService, ThemeRepository themeRepository, TrailRepository trailRepository) {
+        this.trailService = trailService;
+        this.themeRepository = themeRepository;
+        this.trailRepository = trailRepository;
     }
 
-     */
 
     @Transactional(readOnly = true)
     public List<TrailDTO> findTrailsByThemeId(Long themeId) {
-        return trailRepository.findByThemeId(themeId).stream().map(trailService::convertToDTO).toList();
+        return trailRepository.findByThemeId(themeId).stream()
+                .map(trail -> converter.toDTO(trail, TrailDTO.class))
+                .toList();
     }
-
 
     @Transactional(readOnly = true)
     public List<ThemeDTO> findAll() {
         List<Theme> themes = themeRepository.findAll();
         return themes.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+                .map(theme -> converter.toDTO(theme, ThemeDTO.class))
+                .toList();
     }
     @Transactional(readOnly = true)
     public ThemeDTO findById(Long id) {
         Theme theme = themeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(id));
-        return convertToDTO(theme);
+        return converter.toDTO(theme, ThemeDTO.class);
     }
 
     @Transactional
     public ThemeDTO insert(ThemeDTO dto) {
-        Theme theme = convertToEntity(dto);
+        Theme theme = converter.toEntity(dto, Theme.class);
         Theme createdTheme = themeRepository.save(theme);
-        return convertToDTO(createdTheme);
+        return converter.toDTO(createdTheme, ThemeDTO.class);
     }
 
 
