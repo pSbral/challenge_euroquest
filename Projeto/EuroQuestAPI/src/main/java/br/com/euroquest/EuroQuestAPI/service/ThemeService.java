@@ -4,6 +4,7 @@ import br.com.euroquest.EuroQuestAPI.dto.ThemeDTO;
 import br.com.euroquest.EuroQuestAPI.dto.TrailDTO;
 import br.com.euroquest.EuroQuestAPI.model.Theme;
 import br.com.euroquest.EuroQuestAPI.repository.ThemeRepository;
+import br.com.euroquest.EuroQuestAPI.repository.TrailRepository;
 import br.com.euroquest.EuroQuestAPI.service.exception.ResourceNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,10 @@ public class ThemeService {
     private ThemeRepository themeRepository;
 
     @Autowired
+    private TrailRepository trailRepository;
+
+
+    @Autowired
     private TrailService trailService;
 
     private ThemeDTO convertToDTO(Theme theme) {
@@ -34,6 +39,7 @@ public class ThemeService {
     }
 
 
+    /*
     @Transactional(readOnly = true)
     public List<TrailDTO> getTrailsByThemeId(Long themeId) {
         Theme theme = themeRepository.findById(themeId)
@@ -42,6 +48,14 @@ public class ThemeService {
                 .map(trailService::convertToDTO)
                 .collect(Collectors.toList());
     }
+
+     */
+
+    @Transactional(readOnly = true)
+    public List<TrailDTO> findTrailsByThemeId(Long themeId) {
+        return trailRepository.findByThemeId(themeId).stream().map(trailService::convertToDTO).toList();
+    }
+
 
     @Transactional(readOnly = true)
     public List<ThemeDTO> findAll() {

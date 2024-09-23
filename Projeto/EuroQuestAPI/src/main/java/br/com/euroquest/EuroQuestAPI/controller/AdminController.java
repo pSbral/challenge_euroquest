@@ -20,7 +20,6 @@ public class AdminController {
     @Autowired
     private TrailService trailService;
 
-    // Endpoints para trail
     @PostMapping("/trail")
     public ResponseEntity<TrailDTO> createTrail(@RequestBody TrailDTO trailDTO) {
         TrailDTO createdTrail = trailService.insert(trailDTO);
@@ -33,7 +32,7 @@ public class AdminController {
         return ResponseEntity.noContent().build();
     }
 
-    // Endpoints para Question
+
     @PostMapping("/question")
     public ResponseEntity<QuestionDTO> createQuestion(@RequestBody QuestionDTO questionDTO) {
         QuestionDTO createdQuestion = questionService.insert(questionDTO);
