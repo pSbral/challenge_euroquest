@@ -47,7 +47,6 @@ public class QuestionService {
         return converter.toDTO(question, QuestionDTO.class);
     }
 
-    //admin
     @Transactional
     public QuestionDTO insert(QuestionDTO questionDTO) {
         Question question = converter.toEntity(questionDTO, Question.class);
@@ -75,6 +74,26 @@ public class QuestionService {
         question.setTrail(trail);
         Question updatedQuestion = questionRepository.save(question);
         return converter.toDTO(updatedQuestion, QuestionDTO.class);
+    }
+
+    @Transactional
+    public QuestionDTO update(Long id, QuestionDTO questionDTO) {
+        Question existingQuestion = questionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(id));
+        existingQuestion.setTrail(converter.toEntity(questionDTO.getTrailDTO(), Trail.class));
+        existingQuestion.setQuestionText(questionDTO.getQuestionText());
+        existingQuestion.setOptions(questionDTO.getOptions());
+        existingQuestion.setCorrectOptionIndex(questionDTO.getCorrectOptionIndex());
+        Question updatedQuestion = questionRepository.save(existingQuestion);
+        return converter.toDTO(updatedQuestion, QuestionDTO.class);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        if(!(questionRepository.existsById(id))) {
+            throw new ResourceNotFoundException(id);
+        }
+        questionRepository.deleteById(id);
     }
 
     //user

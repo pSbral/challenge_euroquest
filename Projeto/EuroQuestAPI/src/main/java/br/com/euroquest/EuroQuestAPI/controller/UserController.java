@@ -15,13 +15,15 @@ import java.util.List;
 @RequestMapping("euro/user")
 public class UserController {
 
-    @Autowired
+
     private TrailService trailService;
-
-
-    @Autowired
     private QuestionService questionService;
 
+    @Autowired
+    public UserController(TrailService trailService, QuestionService questionService) {
+        this.trailService = trailService;
+        this.questionService = questionService;
+    }
 
     @GetMapping("/trails")
     public ResponseEntity<List<TrailDTO>> getAllTrails() {

@@ -7,6 +7,7 @@ import br.com.euroquest.EuroQuestAPI.model.Trail;
 import br.com.euroquest.EuroQuestAPI.repository.TrailRepository;
 import br.com.euroquest.EuroQuestAPI.service.exception.ResourceNotFoundException;
 import br.com.euroquest.EuroQuestAPI.util.Converter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +21,7 @@ public class TrailService {
     private final Converter converter;
     private final TrailRepository trailRepository;
 
-
+    @Autowired
     public TrailService(Converter converter, TrailRepository trailRepository) {
         this.converter = converter;
         this.trailRepository = trailRepository;
@@ -72,6 +73,8 @@ public class TrailService {
         return converter.toDTO(updatedTrail, TrailDTO.class);
     }
 
+
+    // logica
     public int getTrailScore(Long trailId) {
         Trail trail = trailRepository.findById(trailId)
                 .orElseThrow(() -> new ResourceNotFoundException(trailId));

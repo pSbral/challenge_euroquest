@@ -13,12 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
-
+// only crud
 @Service
 public class ThemeService {
-
-
 
     private Converter converter;
     private ThemeRepository themeRepository;
