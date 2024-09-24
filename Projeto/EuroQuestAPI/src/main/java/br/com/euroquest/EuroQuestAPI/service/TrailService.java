@@ -1,7 +1,6 @@
 package br.com.euroquest.EuroQuestAPI.service;
 
 
-import br.com.euroquest.EuroQuestAPI.dto.QuestionDTO;
 import br.com.euroquest.EuroQuestAPI.dto.TrailDTO;
 import br.com.euroquest.EuroQuestAPI.model.Question;
 import br.com.euroquest.EuroQuestAPI.model.Trail;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -28,15 +26,6 @@ public class TrailService {
         this.trailRepository = trailRepository;
     }
 
-
-    @Transactional(readOnly = true)
-    public List<QuestionDTO> getQuestionsByTrailId(Long trailId) {
-        Trail trail = trailRepository.findById(trailId)
-                .orElseThrow(ResourceNotFoundException::new);
-        return trail.getQuestions().stream()
-                .map(question -> converter.toDTO(question, QuestionDTO.class))
-                .toList();
-    }
     @Transactional(readOnly = true)
     public List<TrailDTO> findAll() {
         List<Trail> trails = trailRepository.findAll();
@@ -73,7 +62,6 @@ public class TrailService {
                 .orElseThrow(() -> new ResourceNotFoundException(id));
         existingTrail.setName(trailDTO.getName());
         existingTrail.setTheme(trailDTO.getTheme());
-        existingTrail.setScore(trailDTO.getScore());
         existingTrail.setQuestions(
                 trailDTO.getQuestions().stream()
                         .map(questionDTO -> converter.toEntity(questionDTO, Question.class))

@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 public class QuestionService {
 
 
+
     private final Converter converter;
     private final QuestionRepository questionRepository;
     private final TrailRepository trailRepository;

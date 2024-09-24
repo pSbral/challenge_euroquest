@@ -22,7 +22,7 @@ public class Theme {
     private Long id;
 
 
-    private ThemeName nome;
+    private String nome;
 
     @OneToMany(mappedBy = "theme", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Trail> trails;

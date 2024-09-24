@@ -55,7 +55,7 @@ public class Trail {
     public void submitAnswer(int selectedOptionIndex) {
         Question currentQuestion = questions.get(currentQuestionIndex - 1);
         if (currentQuestion.isCorrectAnswer(selectedOptionIndex)) {
-            score++;
+            score = getScore() / questions.size() * 100;
         }
     }
 
