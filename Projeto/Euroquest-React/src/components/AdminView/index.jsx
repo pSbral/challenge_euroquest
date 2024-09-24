@@ -176,15 +176,9 @@ const AdminView = () => {
         areas={areas}
         onSelectArea={handleAreaSelection}
         onAddArea={handleAddArea}
-<<<<<<< HEAD
         selectedArea={selectedArea}
       />
 
-=======
-        onUpdateArea={handleUpdateArea}
-        onDeleteArea={handleDeleteArea}
-      />
->>>>>>> main
       <div className="flex-1 p-6 ml-64 bg-gray-100 overflow-y-auto">
         {selectedArea !== null ? (
           <>
@@ -235,6 +229,5 @@ const AdminView = () => {
   );
 };
 
-// The rest of the components (TrilhaForm, ExercicioForm, Trilha) remain the same
 
 export default AdminView;
