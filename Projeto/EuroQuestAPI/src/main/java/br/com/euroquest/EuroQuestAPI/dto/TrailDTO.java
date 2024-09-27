@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -25,14 +26,14 @@ public class TrailDTO {
 
     private String description;
 
-    private Theme theme;
+    private Long themeId;
 
 
     private int currentQuestionIndex = 0;
     private int score = 0;
 
 
-    private List<QuestionDTO> questions;
+    private List<QuestionDTO> questions = new ArrayList<>();
 
 
 

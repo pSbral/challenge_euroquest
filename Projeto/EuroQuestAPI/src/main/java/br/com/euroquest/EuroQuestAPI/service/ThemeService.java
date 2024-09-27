@@ -12,8 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
-// only crud
+
 @Service
 public class ThemeService {
 
@@ -22,16 +23,17 @@ public class ThemeService {
     private TrailRepository trailRepository;
 
     @Autowired
-    public ThemeService(ThemeRepository themeRepository, TrailRepository trailRepository) {
+    public ThemeService(ThemeRepository themeRepository, TrailRepository trailRepository, Converter converter) {
         this.themeRepository = themeRepository;
         this.trailRepository = trailRepository;
+        this.converter = converter;
     }
 
 
     @Transactional(readOnly = true)
     public List<TrailDTO> findTrailsByThemeId(Long themeId) {
         return trailRepository.findByThemeId(themeId).stream()
-                .map(trail -> converter.toDTO(trail, TrailDTO.class))
+                .map(trail -> converter.toDTO(trail))
                 .toList();
     }
 
@@ -39,21 +41,21 @@ public class ThemeService {
     public List<ThemeDTO> findAll() {
         List<Theme> themes = themeRepository.findAll();
         return themes.stream()
-                .map(theme -> converter.toDTO(theme, ThemeDTO.class))
+                .map(theme -> converter.toDTO(theme))
                 .toList();
     }
     @Transactional(readOnly = true)
     public ThemeDTO findById(Long id) {
         Theme theme = themeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(id));
-        return converter.toDTO(theme, ThemeDTO.class);
+        return converter.toDTO(theme);
     }
 
     @Transactional
     public ThemeDTO insert(ThemeDTO dto) {
-        Theme theme = converter.toEntity(dto, Theme.class);
+        Theme theme = converter.toEntity(dto);
         Theme createdTheme = themeRepository.save(theme);
-        return converter.toDTO(createdTheme, ThemeDTO.class);
+        return converter.toDTO(createdTheme);
     }
 
     @Transactional
@@ -70,11 +72,15 @@ public class ThemeService {
         Theme existingTheme = themeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(id));
         existingTheme.setNome(themeDTO.getNome());
-        existingTheme.setTrails(themeDTO.getTrails().stream()
-                .map(trailDTO -> converter.toEntity(trailDTO, Trail.class))
-                .toList());
+        if (themeDTO.getTrails() != null) {
+            existingTheme.setTrails(themeDTO.getTrails().stream()
+                    .map(trailDTO -> converter.toEntity(trailDTO))
+                    .toList());
+        } else {
+            themeDTO.setTrails(new ArrayList<>());
+        }
         Theme updatedTheme = themeRepository.save(existingTheme);
-        return converter.toDTO(updatedTheme, ThemeDTO.class);
+        return converter.toDTO(updatedTheme);
     }
     
 

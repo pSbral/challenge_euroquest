@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -16,10 +18,10 @@ public class QuestionDTO {
 
     private String questionText;
 
-    private String[] options;
+    private List<String> options;
 
     private int correctOptionIndex;
 
-    private TrailDTO trailDTO;
+    private Long trailId;
 
 }

@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,13 +18,19 @@ import lombok.Setter;
 public class Question {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "question_seq")
+    @SequenceGenerator(name = "question_seq", sequenceName = "question_sequence", allocationSize = 1)
     private Long id;
+
     private String questionText;
-    private String[] options;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "question_options", joinColumns = @JoinColumn(name = "question_id"))
+    @Column(name = "option")
+    private List<String> options;
     private int correctOptionIndex;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "trail_id")
     private Trail trail;
 
