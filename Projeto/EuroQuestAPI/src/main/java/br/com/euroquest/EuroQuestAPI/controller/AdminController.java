@@ -3,7 +3,6 @@ package br.com.euroquest.EuroQuestAPI.controller;
 import br.com.euroquest.EuroQuestAPI.dto.QuestionDTO;
 import br.com.euroquest.EuroQuestAPI.dto.ThemeDTO;
 import br.com.euroquest.EuroQuestAPI.dto.TrailDTO;
-import br.com.euroquest.EuroQuestAPI.model.Trail;
 import br.com.euroquest.EuroQuestAPI.service.QuestionService;
 import br.com.euroquest.EuroQuestAPI.service.ThemeService;
 import br.com.euroquest.EuroQuestAPI.service.TrailService;
@@ -124,6 +123,12 @@ public class AdminController {
     public ResponseEntity<QuestionDTO> createNewQuestion(@RequestBody QuestionDTO questionDTO) {
         QuestionDTO createdQuestion = questionService.insert(questionDTO);
         return ResponseEntity.ok(createdQuestion);
+    }
+
+    @GetMapping("/questions/{questionId}")
+    public ResponseEntity<QuestionDTO> findQuestionById(@PathVariable Long questionId) {
+        QuestionDTO question = questionService.findById(questionId);
+        return ResponseEntity.ok(question);
     }
 
     @PutMapping({"/theme/{themeId}/trail/{trailId}/question/{questionId}", "/questions/{questionId}"})
