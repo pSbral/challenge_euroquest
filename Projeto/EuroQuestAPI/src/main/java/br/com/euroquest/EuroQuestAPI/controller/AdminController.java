@@ -64,8 +64,8 @@ public class AdminController {
 
 
     @GetMapping("/theme/{themeId}/trail")
-    public ResponseEntity<List<TrailDTO>> getAllTrails() {
-        List<TrailDTO> trails = trailService.findAll();
+    public ResponseEntity<List<TrailDTO>> getAllTrailsById(@PathVariable Long themeId) {
+        List<TrailDTO> trails = trailService.findAllByThemeId(themeId);
         return ResponseEntity.ok(trails);
     }
 
@@ -92,7 +92,7 @@ public class AdminController {
     // Question Endpoints
 
     @GetMapping("/theme/{themeId}/trail/{trailId}/question")
-    public ResponseEntity<List<QuestionDTO>> getAllQuestionsByTrail(@PathVariable Long trailId) {
+    public ResponseEntity<List<QuestionDTO>> getAllQuestionsByTrailId(@PathVariable Long trailId) {
         List<QuestionDTO> questions = questionService.findByTrailId(trailId);
         return ResponseEntity.ok(questions);
     }

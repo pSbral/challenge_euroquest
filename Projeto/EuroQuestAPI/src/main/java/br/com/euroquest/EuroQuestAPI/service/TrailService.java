@@ -35,12 +35,21 @@ public class TrailService {
     }
 
     @Transactional(readOnly = true)
-    public List<TrailDTO> findAll() {
-        List<Trail> trails = trailRepository.findAll();
+    public List<TrailDTO> findAllByThemeId(Long themeId) {
+        List<Trail> trails = trailRepository.findByThemeId(themeId);
         return trails.stream()
                     .map(converter::toDTO)
                 .toList();
     }
+
+    @Transactional(readOnly = true)
+    public List<TrailDTO> findAll() {
+        List<Trail> trails = trailRepository.findAll();
+        return trails.stream()
+                .map(converter::toDTO)
+                .toList();
+    }
+
 
     @Transactional(readOnly = true)
     public TrailDTO findById(Long id) {
