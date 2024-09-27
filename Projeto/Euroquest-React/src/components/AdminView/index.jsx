@@ -15,6 +15,7 @@ import {
   updateExercicio,
   deleteExercicio,
 } from '../../apiService'; // Import the service
+import AddExercise from '../AdminAddExercise';
 
 const AdminView = () => {
   const [areas, setAreas] = useState([]);
@@ -221,7 +222,7 @@ const AdminView = () => {
           </>
         ) : (
           <div className="text-center">
-            <h2 className="text-lg text-gray-600">Selecione uma área para visualizar as trilhas.</h2>
+            <AddExercise />
           </div>
         )}
       </div>
