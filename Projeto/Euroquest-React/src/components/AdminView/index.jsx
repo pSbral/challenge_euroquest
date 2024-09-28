@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Sidebar from '../Sidebar';
+import Sidebar from '../SidebarADM';
 import Trilha from '../Trilha';
 import {
   getAreas,
@@ -16,6 +16,7 @@ import {
   deleteExercicio,
 } from '../../apiService'; // Import the service
 import AddExercise from '../AdminAddExercise';
+import SidebarADM from '../SidebarADM';
 
 const AdminView = () => {
   const [areas, setAreas] = useState([]);
@@ -173,7 +174,7 @@ const AdminView = () => {
 
   return (
     <div className="flex h-screen">
-      <Sidebar
+      <SidebarADM
         areas={areas}
         onSelectArea={handleAreaSelection}
         onAddArea={handleAddArea}
