@@ -1,21 +1,25 @@
-// src/AppRouter.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './pages/home';
-import Documents from './pages/docPage';
-import Settings from './pages/settingsPage';
-import Quest from './pages/quizPage';
-import Quiz from './components/Quiz';
+import Layout from './components/Layout';
+import HomeContent from './pages/HomeContent';
+import DocumentsContent from './pages/DocumentsContent';
+import SettingsContent from './pages/SettingsContent';
+import QuizContent from './pages/QuizContent';
+
 
 const AppRouter = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/quest" element={<Quest />} /> 
-        <Route path="/quiz/:exerciseId" element={<Quiz />} /> 
-        <Route path="/documents" element={<Documents />} />
-        <Route path="/settings" element={<Settings />} />
+        <Route path="/" element={<Layout />}>
+          {/* Rotas Filhas */}
+          <Route index element={<HomeContent />} />
+          <Route path="documents" element={<DocumentsContent />} />
+          <Route path="settings" element={<SettingsContent />} />
+          <Route path="quest" element={<QuizContent />} />
+          <Route path="quiz/:exerciseId" element={<QuizContent />} />
+
+        </Route>
       </Routes>
     </Router>
   );

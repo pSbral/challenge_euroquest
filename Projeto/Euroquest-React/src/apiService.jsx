@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_ADMIN_URL = 'http://localhost:8080/euro';
+const API_BASE_URL = 'http://localhost:8080/euro';
 
 
 // Areas Themes
