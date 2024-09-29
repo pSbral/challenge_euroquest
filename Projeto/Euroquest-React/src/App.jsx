@@ -1,11 +1,13 @@
+// src/App.js
 import React from 'react';
-import AppRouter from './Router'; // Importando o componente de rotas
+import AppRouter from './Router';
+import { TopicsProvider } from './components/TopicContext'; 
 
 const App = () => {
   return (
-    <div>
-      <AppRouter />  {/* Roteamento definido */}
-    </div>
+    <TopicsProvider>
+      <AppRouter />
+    </TopicsProvider>
   );
 };
 

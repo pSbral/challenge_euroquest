@@ -3,7 +3,7 @@ import HomeContent from '../HomeContent';
 import DocumentsContent from '../DocumentsContent';
 import QuizContent from '../QuizContent';
 import SettingsContent from '../SettingsContent';
-import SidebarUser from '../../components/SidebarUser';
+import SidebarUser from '../../components/Sidebar';
 
 
 const MainPage = () => {

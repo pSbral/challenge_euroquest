@@ -5,6 +5,7 @@ import HomeContent from './pages/HomeContent';
 import DocumentsContent from './pages/DocumentsContent';
 import SettingsContent from './pages/SettingsContent';
 import QuizContent from './pages/QuizContent';
+import Quiz from './components/Quiz';
 
 
 const AppRouter = () => {
@@ -17,7 +18,7 @@ const AppRouter = () => {
           <Route path="documents" element={<DocumentsContent />} />
           <Route path="settings" element={<SettingsContent />} />
           <Route path="quest" element={<QuizContent />} />
-          <Route path="quiz/:exerciseId" element={<QuizContent />} />
+          <Route path="quiz/:exerciseId" element={<Quiz />} />
 
         </Route>
       </Routes>

@@ -1,40 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { FaBackward } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { TopicsContext } from '../../components/TopicContext';
 
 const QuizContent = () => {
-  const [topics, setTopics] = useState([
-    {
-      id: 1,
-      name: 'Introdução ao Produto',
-      exercises: [
-        { id: 1, name: 'Exercício 1' },
-        { id: 2, name: 'Exercício 2' },
-      ],
-    },
-    {
-      id: 2,
-      name: 'Navegação na Plataforma',
-      exercises: [
-        { id: 1, name: 'Exercício 3' },
-        { id: 2, name: 'Exercício 4' },
-      ],
-    },
-    {
-      id: 3,
-      name: 'Configurações de Conta',
-      exercises: [
-        { id: 1, name: 'Exercício 5' },
-        { id: 2, name: 'Exercício 6' },
-      ],
-    },
-  ]);
-
+  const { topics, setTopics } = useContext(TopicsContext); // Use o contexto
   const [currentTopic, setCurrentTopic] = useState(null);
   const [showAddTopicForm, setShowAddTopicForm] = useState(false);
   const [newTopicName, setNewTopicName] = useState('');
   const [showAddExerciseForm, setShowAddExerciseForm] = useState(false);
-  const [newExerciseName, setNewExerciseName] = useState('');
   const [isDeleteMode, setIsDeleteMode] = useState(false);
+
+  // Estados para o novo exercício
+  const [newExerciseName, setNewExerciseName] = useState('');
+  const [newExerciseType, setNewExerciseType] = useState('');
+  const [newExerciseQuestion, setNewExerciseQuestion] = useState('');
+  const [newExerciseAlternatives, setNewExerciseAlternatives] = useState(['', '', '', '']);
+  const [newExerciseCorrectAnswer, setNewExerciseCorrectAnswer] = useState(null);
+
+  const navigate = useNavigate();
 
   // Função para selecionar um tópico
   const handleTopicSelect = (topic) => {
@@ -58,36 +42,6 @@ const QuizContent = () => {
     setTopics([...topics, newTopic]);
     setNewTopicName('');
     setShowAddTopicForm(false);
-  };
-
-  // Função para adicionar um novo exercício
-  const handleAddExercise = () => {
-    if (newExerciseName.trim() === '') return;
-
-    const newExercise = {
-      id:
-        currentTopic.exercises.length > 0
-          ? Math.max(...currentTopic.exercises.map((e) => e.id)) + 1
-          : 1,
-      name: newExerciseName,
-    };
-
-    // Atualiza os exercícios do tópico atual
-    const updatedTopic = {
-      ...currentTopic,
-      exercises: [...currentTopic.exercises, newExercise],
-    };
-
-    // Atualiza a lista de tópicos
-    setTopics(
-      topics.map((topic) =>
-        topic.id === currentTopic.id ? updatedTopic : topic
-      )
-    );
-
-    setCurrentTopic(updatedTopic);
-    setNewExerciseName('');
-    setShowAddExerciseForm(false);
   };
 
   // Função para excluir um tópico
@@ -128,12 +82,64 @@ const QuizContent = () => {
     }
   };
 
+  // Função para adicionar um novo exercício
+  const handleAddExercise = (e) => {
+    e.preventDefault();
+
+    if (
+      newExerciseName.trim() === '' ||
+      newExerciseType.trim() === '' ||
+      newExerciseQuestion.trim() === '' ||
+      (newExerciseType === 'mult' &&
+        (newExerciseAlternatives.some((alt) => alt.trim() === '') ||
+         newExerciseCorrectAnswer === null))
+    ) {
+      alert('Por favor, preencha todos os campos e selecione a resposta correta.');
+      return;
+    }
+
+    const newExercise = {
+      id:
+        currentTopic.exercises.length > 0
+          ? Math.max(...currentTopic.exercises.map((e) => e.id)) + 1
+          : 1,
+      name: newExerciseName,
+      type: newExerciseType,
+      question: newExerciseQuestion,
+      alternatives: newExerciseType === 'mult' ? newExerciseAlternatives : [],
+      correctAnswer: newExerciseType === 'mult' ? newExerciseCorrectAnswer : null,
+    };
+
+    // Atualiza os exercícios do tópico atual
+    const updatedTopic = {
+      ...currentTopic,
+      exercises: [...currentTopic.exercises, newExercise],
+    };
+
+    // Atualiza a lista de tópicos
+    setTopics(
+      topics.map((topic) =>
+        topic.id === currentTopic.id ? updatedTopic : topic
+      )
+    );
+
+    setCurrentTopic(updatedTopic);
+
+    // Limpa os campos do formulário
+    setNewExerciseName('');
+    setNewExerciseType('');
+    setNewExerciseQuestion('');
+    setNewExerciseAlternatives(['', '', '', '']);
+    setNewExerciseCorrectAnswer(null);
+    setShowAddExerciseForm(false);
+  };
+
   // Função para selecionar um exercício
   const handleExerciseSelect = (exercise) => {
     if (isDeleteMode) {
       handleDeleteExercise(exercise.id);
     } else {
-      alert(`Iniciando ${exercise.name}`);
+      navigate(`/quiz/${exercise.id}`);
     }
   };
 
@@ -248,19 +254,82 @@ const QuizContent = () => {
 
           {showAddExerciseForm && (
             <div className="mb-6">
-              <input
-                type="text"
-                placeholder="Nome do novo exercício"
-                value={newExerciseName}
-                onChange={(e) => setNewExerciseName(e.target.value)}
-                className="border border-gray-300 rounded p-2 w-full mb-2"
-              />
-              <button
-                onClick={handleAddExercise}
-                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300"
-              >
-                Salvar Exercício
-              </button>
+              <form onSubmit={handleAddExercise}>
+                <div className="mb-4">
+                  <label className="block text-gray-700">Nome</label>
+                  <input
+                    type="text"
+                    className="w-full p-2 border rounded-lg"
+                    placeholder="Nome do exercício"
+                    value={newExerciseName}
+                    onChange={(e) => setNewExerciseName(e.target.value)}
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-gray-700">Tipo</label>
+                  <select
+                    className="w-full p-2 border rounded-lg"
+                    value={newExerciseType}
+                    onChange={(e) => setNewExerciseType(e.target.value)}
+                  >
+                    <option value="" disabled>
+                      Selecione um tipo
+                    </option>
+                    <option value="mult">Múltipla Escolha</option>
+                    <option value="diss">Dissertativa</option>
+                  </select>
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-gray-700">Questão</label>
+                  <textarea
+                    className="w-full p-2 border rounded-lg"
+                    rows="3"
+                    placeholder="Escreva a questão"
+                    value={newExerciseQuestion}
+                    onChange={(e) => setNewExerciseQuestion(e.target.value)}
+                  ></textarea>
+                </div>
+
+                {newExerciseType === 'mult' && (
+                  <>
+                    {newExerciseAlternatives.map((alt, index) => (
+                      <div className="mb-2" key={index}>
+                        <label className="block text-gray-700">{`Alternativa ${index + 1}`}</label>
+                        <div className="flex items-center">
+                          <input
+                            type="text"
+                            className="w-full p-2 border rounded-lg"
+                            placeholder={`Alternativa ${index + 1}`}
+                            value={alt}
+                            onChange={(e) => {
+                              const newAlternatives = [...newExerciseAlternatives];
+                              newAlternatives[index] = e.target.value;
+                              setNewExerciseAlternatives(newAlternatives);
+                            }}
+                          />
+                          <input
+                            type="radio"
+                            name="correctAnswer"
+                            value={index}
+                            checked={newExerciseCorrectAnswer === index}
+                            onChange={() => setNewExerciseCorrectAnswer(index)}
+                            className="ml-2"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                )}
+
+                <button
+                  type="submit"
+                  className="w-full bg-lightblue-quest text-white p-2 rounded-lg hover:bg-lightblue-quest-hover transition-colors"
+                >
+                  Adicionar Exercício
+                </button>
+              </form>
             </div>
           )}
 
@@ -272,12 +341,22 @@ const QuizContent = () => {
             {currentTopic.exercises.map((exercise) => (
               <div
                 key={exercise.id}
-                className={`bg-blue-500 text-white font-semibold py-4 rounded-lg shadow-lg hover:bg-blue-600 transition duration-300 transform hover:scale-105 flex items-center justify-center ${
-                  isDeleteMode ? 'bg-red-100 text-black' : 'cursor-pointer'
+                className={`bg-blue-500 text-white font-semibold p-4 rounded-lg shadow-lg hover:bg-blue-600 transition duration-300 transform hover:scale-105 flex flex-col cursor-pointer ${
+                  isDeleteMode ? 'bg-red-100 text-black' : ''
                 }`}
                 onClick={() => handleExerciseSelect(exercise)}
               >
-                {exercise.name}
+                <h3 className="text-lg">{exercise.name}</h3>
+                <p className="text-sm">{exercise.question}</p>
+                {exercise.type === 'mult' && (
+                  <ul className="mt-2">
+                    {exercise.alternatives.map((alt, index) => (
+                      <li key={index} className="text-sm">
+                        {`${index + 1}. ${alt}`}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             ))}
           </div>
