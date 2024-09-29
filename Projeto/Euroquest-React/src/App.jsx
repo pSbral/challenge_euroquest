@@ -1,12 +1,12 @@
 import React from 'react';
-import AdminView from './components/AdminView'; // Certifique-se de que o caminho está correto
+import AppRouter from './Router'; // Importando o componente de rotas
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <AdminView />
+    <div>
+      <AppRouter />  {/* Roteamento definido */}
     </div>
   );
-}
+};
 
 export default App;
