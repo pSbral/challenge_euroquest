@@ -19,7 +19,8 @@ import java.util.List;
 public class Trail {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "trail_seq")
+    @SequenceGenerator(name = "trail_seq", sequenceName = "trail_sequence", allocationSize = 1)
     private Long id;
 
     private String name;
@@ -34,13 +35,12 @@ public class Trail {
     @OneToMany(mappedBy = "trail", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> questions;
 
+    @Transient
     private int currentQuestionIndex = 0;
+    @Transient
     private int score = 0;
 
-    public Trail(List<Question> questions) {
-        this.questions = questions;
-    }
-
+    
     public boolean hasNextQuestion() {
         return currentQuestionIndex < questions.size();
     }

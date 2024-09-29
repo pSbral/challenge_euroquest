@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,7 +36,7 @@ public class QuestionService {
     public List<QuestionDTO> findAll() {
         List<Question> questions = questionRepository.findAll();
         return questions.stream()
-                .map(question -> converter.toDTO(question, QuestionDTO.class))
+                .map(converter::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -44,48 +45,56 @@ public class QuestionService {
     public QuestionDTO findById(Long id) {
         Question question = questionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(id));
-        return converter.toDTO(question, QuestionDTO.class);
+        return converter.toDTO(question);
     }
 
     @Transactional
     public QuestionDTO insert(QuestionDTO questionDTO) {
-        Question question = converter.toEntity(questionDTO, Question.class);
+        Question question = converter.toEntity(questionDTO);
         Question savedQuestion = questionRepository.save(question);
-        return converter.toDTO(savedQuestion, QuestionDTO.class);
+        return converter.toDTO(savedQuestion);
     }
 
     @Transactional
     public QuestionDTO addQuestionToTrail(Long trailId, QuestionDTO questionDTO) {
         Trail trail = trailRepository.findById(trailId)
                 .orElseThrow(ResourceNotFoundException::new);
-        Question question = converter.toEntity(questionDTO, Question.class);
+        Question question = converter.toEntity(questionDTO);
         question.setTrail(trail);
         Question savedQuestion = questionRepository.save(question);
-        return converter.toDTO(savedQuestion, QuestionDTO.class);
+        return converter.toDTO(savedQuestion);
     }
 
     @Transactional
     public QuestionDTO addExistingQuestionToTrail(Long trailId, Long questionId) {
+        Question originalQuestion = questionRepository.findById(questionId)
+                .orElseThrow(() -> new ResourceNotFoundException(questionId));
         Trail trail = trailRepository.findById(trailId)
-                .orElseThrow(ResourceNotFoundException::new);
-
-        Question question = questionRepository.findById(questionId)
-                .orElseThrow(ResourceNotFoundException::new);
-        question.setTrail(trail);
-        Question updatedQuestion = questionRepository.save(question);
-        return converter.toDTO(updatedQuestion, QuestionDTO.class);
+                .orElseThrow(() -> new ResourceNotFoundException(trailId));
+        Question copiedQuestion = new Question();
+        copiedQuestion.setQuestionText(originalQuestion.getQuestionText());
+        copiedQuestion.setCorrectOptionIndex(originalQuestion.getCorrectOptionIndex());
+        copiedQuestion.setOptions(new ArrayList<>(originalQuestion.getOptions()));
+        copiedQuestion.setTrail(trail);
+        Question savedQuestion = questionRepository.save(copiedQuestion);
+        return converter.toDTO(savedQuestion);
     }
+
 
     @Transactional
     public QuestionDTO update(Long id, QuestionDTO questionDTO) {
         Question existingQuestion = questionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(id));
-        existingQuestion.setTrail(converter.toEntity(questionDTO.getTrailDTO(), Trail.class));
+
+        Trail trail = trailRepository.findById(questionDTO.getTrailId())
+                .orElseThrow(() -> new ResourceNotFoundException(questionDTO.getTrailId()));
+
+        existingQuestion.setTrail(trail);
         existingQuestion.setQuestionText(questionDTO.getQuestionText());
         existingQuestion.setOptions(questionDTO.getOptions());
         existingQuestion.setCorrectOptionIndex(questionDTO.getCorrectOptionIndex());
         Question updatedQuestion = questionRepository.save(existingQuestion);
-        return converter.toDTO(updatedQuestion, QuestionDTO.class);
+        return converter.toDTO(updatedQuestion);
     }
 
     @Transactional
@@ -102,7 +111,7 @@ public class QuestionService {
     public List<QuestionDTO> findByTrailId(Long trailId) {
         List<Question> questions = questionRepository.findByTrailId(trailId);
         return questions.stream()
-                .map(question -> converter.toDTO(question, QuestionDTO.class))
+                .map(converter::toDTO)
                 .toList();
     }
 

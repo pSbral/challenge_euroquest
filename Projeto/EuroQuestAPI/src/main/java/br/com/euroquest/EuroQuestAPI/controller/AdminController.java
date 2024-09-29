@@ -6,6 +6,7 @@ import br.com.euroquest.EuroQuestAPI.dto.TrailDTO;
 import br.com.euroquest.EuroQuestAPI.service.QuestionService;
 import br.com.euroquest.EuroQuestAPI.service.ThemeService;
 import br.com.euroquest.EuroQuestAPI.service.TrailService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,15 +59,26 @@ public class AdminController {
         return ResponseEntity.noContent().build();
     }
 
+
     // Trail Endpoints
+
+
+    @GetMapping("/theme/{themeId}/trail")
+    public ResponseEntity<List<TrailDTO>> getAllTrailsById(@PathVariable Long themeId) {
+        List<TrailDTO> trails = trailService.findAllByThemeId(themeId);
+        return ResponseEntity.ok(trails);
+    }
+
+
     @PostMapping("/theme/{themeId}/trail")
-    public ResponseEntity<TrailDTO> createTrail(@RequestBody TrailDTO trailDTO) {
+    public ResponseEntity<TrailDTO> createTrail(@PathVariable Long themeId, @RequestBody TrailDTO trailDTO) {
+        trailDTO.setThemeId(themeId);
         TrailDTO createdTrail = trailService.insert(trailDTO);
-        return ResponseEntity.ok(createdTrail);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdTrail);
     }
 
     @PutMapping("/theme/{themeId}/trail/{trailId}")
-    public ResponseEntity<TrailDTO> updateTrail(@PathVariable Long trailId, @RequestBody TrailDTO trailDTO) {
+    public ResponseEntity<TrailDTO> updateTrail(@PathVariable  @Valid Long trailId, @RequestBody TrailDTO trailDTO) {
         TrailDTO updatedTrail = trailService.update(trailId, trailDTO);
         return ResponseEntity.ok(updatedTrail);
     }
@@ -78,6 +90,21 @@ public class AdminController {
     }
 
     // Question Endpoints
+
+    @GetMapping("/theme/{themeId}/trail/{trailId}/question")
+    public ResponseEntity<List<QuestionDTO>> getAllQuestionsByTrailId(@PathVariable Long trailId) {
+        List<QuestionDTO> questions = questionService.findByTrailId(trailId);
+        return ResponseEntity.ok(questions);
+    }
+
+    @GetMapping("/questions")
+    public ResponseEntity<List<QuestionDTO>> getAllQuestions() {
+        List<QuestionDTO> questions = questionService.findAll();
+        return ResponseEntity.ok(questions);
+    }
+
+
+
     @PostMapping("/theme/{themeId}/trail/{trailId}/question")
     public ResponseEntity<QuestionDTO> addQuestionToTrail(@PathVariable Long trailId, @RequestBody QuestionDTO questionDTO) {
         QuestionDTO createdQuestion = questionService.addQuestionToTrail(trailId, questionDTO);
@@ -98,13 +125,19 @@ public class AdminController {
         return ResponseEntity.ok(createdQuestion);
     }
 
-    @PutMapping("/theme/{themeId}/trail/{trailId}/question/{questionId}")
+    @GetMapping("/questions/{questionId}")
+    public ResponseEntity<QuestionDTO> findQuestionById(@PathVariable Long questionId) {
+        QuestionDTO question = questionService.findById(questionId);
+        return ResponseEntity.ok(question);
+    }
+
+    @PutMapping({"/theme/{themeId}/trail/{trailId}/question/{questionId}", "/questions/{questionId}"})
     public ResponseEntity<QuestionDTO> updateQuestion(@PathVariable Long questionId, @RequestBody QuestionDTO questionDTO) {
         QuestionDTO updatedQuestion = questionService.update(questionId, questionDTO);
         return ResponseEntity.ok(updatedQuestion);
     }
 
-    @DeleteMapping("/theme/{themeId}/trail/{trailId}/question/{questionId}")
+    @DeleteMapping({"/theme/{themeId}/trail/{trailId}/question/{questionId}", "/questions/{questionId}"})
     public ResponseEntity<Void> deleteQuestion(@PathVariable Long questionId) {
         questionService.delete(questionId);
         return ResponseEntity.noContent().build();
